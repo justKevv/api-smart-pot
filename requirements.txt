@@ -1,5 +1,5 @@
 Flask
 requests
-pymongo
+pymongo==4.6.1
 pandas
 cloudinary
