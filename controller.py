@@ -18,6 +18,7 @@ class Controller:
         self._app.add_url_rule('/get/image/<id>', view_func=self._get_image, methods=['GET'])
         self._app.add_url_rule('/insert/data/<id>', view_func=self._insert_data, methods=['POST'])
         self._app.add_url_rule('/find/data/<id>', view_func=self._find_data, methods=['GET'])
+        self._app.add_url_rule('/find/user/<id>', view_func=self._find_pot_ids, methods=['GET'])
 
     def _insert_user(self):
         try:
@@ -84,6 +85,16 @@ class Controller:
                 return jsonify({'message': 'User not found.'}), 404
         except Exception as e:
             return str(e), 500
-        
+
+    def _find_pot_ids(self, id):
+        try:
+            id = int(id)
+            if self.__db_model.is_user(id):
+                data = self.__db_model.get_pot_ids(id)
+                return jsonify(data), 200
+            else:
+                return jsonify({'message': 'User not found.'}), 404
+        except Exception as e:
+            return str(e), 500
     def run(self):
         self._app.run(host='0.0.0.0')

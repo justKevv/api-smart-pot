@@ -59,6 +59,14 @@ class Model():
         else:
             return True
 
+    def get_pot_ids(self, chat_id):
+        user = self.__collection_user.find_one({'chat_id' : chat_id}, {'_id': 0,'pot_ids' : 1})
+
+        if user == None:
+            return False
+        else:
+            return user['pot_ids']
+
     def insert_image(self, pot_id, url):
         image = {
             'pot_id' : pot_id,
