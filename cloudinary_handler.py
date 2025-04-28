@@ -6,8 +6,8 @@ import os
 class CloudinaryHandler:
     def __init__(self):
         cloudinary.config(
-            cloud_name='dkozkdqen',
-            api_key='951586527394119',
+            cloud_name='dcj08h5jm',
+            api_key='649636957145547',
             api_secret=os.environ.get('CLOUDINARY_API'),
             secure=True
         )
@@ -26,4 +26,3 @@ class CloudinaryHandler:
             version=None
         )
         return url
-
