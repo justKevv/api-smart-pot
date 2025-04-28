@@ -89,11 +89,8 @@ class Controller:
     def _find_pot_ids(self, id):
         try:
             id = int(id)
-            if self.__db_model.is_user(id):
-                data = self.__db_model.get_pot_ids(id)
-                return jsonify(data), 200
-            else:
-                return jsonify({'message': 'User not found.'}), 404
+            data = self.__db_model.get_pot_ids(id)
+            return jsonify(data), 200
         except Exception as e:
             return str(e), 500
     def run(self):
