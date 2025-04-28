@@ -26,7 +26,10 @@ class Model():
     def insert_user(self, chat_id, pot_id):
         user_search = self.__collection_user.find_one({'chat_id' : chat_id})
         if user_search is None:
-            new_user = {
+            if pot_id == None:
+                return False
+            else:
+                new_user = {
                 'chat_id' : chat_id,
                 'pot_ids' : [pot_id]
             }
