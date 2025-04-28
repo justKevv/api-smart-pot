@@ -8,7 +8,7 @@ class Model():
     def __init__(self):
         self.__client = MongoClient(os.environ.get('MONGODB_API'),  server_api=ServerApi('1'))
         try:
-            self.__database = self.__client.get_database('smartfarm')
+            self.__database = self.__client.get_database('Smart-Farm')
             self.__collection()
             self.__specification()
         except Exception as e:
@@ -30,11 +30,11 @@ class Model():
         self.__collection_user.insert_one(user)
 
     def is_user(self, pot_id):
-        user = self.__collection_user.find_one({'pot_id' : pot_id}, {'_id': 0,'chat_id' : 1}) 
+        user = self.__collection_user.find_one({'pot_id' : pot_id}, {'_id': 0,'chat_id' : 1})
         if user == None:
             return False
         else:
-            return True       
+            return True
 
     def insert_image(self, pot_id, url):
         image = {
@@ -73,15 +73,15 @@ class Model():
                 'soil': soil,
                 }
             }
-        
+
         self.__collection_data.insert_one(data)
-    
+
     def find_data(self, pot_id):
         cursor = self.__collection_data.find({'pot_id' : pot_id}, {'_id': 0, 'data.ph': 1, 'data.soil': 1}).sort('_id', -1).limit(10)
         raw_data = list(cursor)
 
-        df = pd.json_normalize(raw_data) 
+        df = pd.json_normalize(raw_data)
 
-        df = df[['data.ph', 'data.soil']].iloc[::-1]  
+        df = df[['data.ph', 'data.soil']].iloc[::-1]
 
         return df.rename(columns={'data.ph': 'ph', 'data.soil': 'soil'}).to_dict(orient='records')
