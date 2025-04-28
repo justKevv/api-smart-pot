@@ -3,6 +3,7 @@ from model import Model
 from cloudinary_handler import CloudinaryHandler
 import io
 import requests
+from werkzeug.exceptions import BadRequest # Import BadRequest
 
 class Controller:
     def __init__(self, app_instance):
@@ -63,17 +64,49 @@ class Controller:
 
     def _insert_data(self, id):
         try:
-            id = int(id)
-            if self.__db_model.is_user(id):
+            # 1. Validate pot ID format
+            try:
+                pot_id = int(id)
+            except ValueError:
+                return jsonify({'message': f'Invalid pot ID format: "{id}". Must be an integer.'}), 400
+
+            # 2. Check if user/pot exists (using the corrected is_user)
+            if not self.__db_model.is_user(pot_id):
+                 return jsonify({'message': f'Pot ID {pot_id} not associated with any user.'}), 404
+
+            # 3. Parse JSON and handle parsing errors explicitly
+            try:
                 data = request.get_json()
-                ph = data.get('ph')
-                soil = data.get('soil')
-                self.__db_model.insert_data(id, ph, soil)
-                return jsonify({'message': 'Data saved successfully'}), 201
-            else:
-                return jsonify({'message': 'User not found.'}), 404
+                if data is None:
+                    # This happens if Content-Type is not application/json or body is empty/invalid
+                    return jsonify({'message': 'Invalid JSON payload or missing/incorrect Content-Type header (must be application/json).'}), 400
+            except BadRequest as e:
+                # Catches errors during JSON parsing (e.g., malformed JSON)
+                return jsonify({'message': f'Failed to decode JSON object: {e.description}'}), 400
+
+            # 4. Check for required keys in the parsed JSON
+            ph = data.get('ph')
+            soil = data.get('soil')
+
+            if ph is None or soil is None:
+                 return jsonify({'message': 'Missing required key(s) in JSON payload. Both "ph" and "soil" must be provided.'}), 400
+
+            # Optional: Add type validation if needed (e.g., ensure ph is a number, soil is an integer)
+            # try:
+            #     ph_val = float(ph)
+            #     soil_val = int(soil)
+            # except (ValueError, TypeError):
+            #     return jsonify({'message': '"ph" must be a number and "soil" must be an integer.'}), 400
+
+            # 5. Insert data if all checks pass
+            self.__db_model.insert_data(pot_id, ph, soil) # Use validated pot_id and data
+            return jsonify({'message': 'Data saved successfully'}), 201
+
+        # 6. Catch-all for other unexpected errors (e.g., database issues)
         except Exception as e:
-            return str(e), 500
+            # Log the actual error on the server for debugging
+            print(f"Unexpected error in _insert_data for pot_id {id}: {e}") # Consider using Flask's logger
+            return jsonify({'message': 'An internal server error occurred.'}), 500
 
     def _find_data(self, id):
         try:
