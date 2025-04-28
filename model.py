@@ -27,19 +27,29 @@ class Model():
         user_search = self.__collection_user.find_one({'chat_id' : chat_id})
         if user_search is None:
             if pot_id == None:
-                return False
+                new_user = {
+                'chat_id' : chat_id,
+                'pot_ids' : [pot_id]
+                }
+                try:
+                    self.__collection_user.insert_one(new_user)
+                    print(f"Inserted new user: {chat_id} with pot: {pot_id}")
+                    return True
+                except Exception as e:
+                    print(f"Error inserting user {chat_id}: {e}")
+                    return False
             else:
                 new_user = {
                 'chat_id' : chat_id,
                 'pot_ids' : [pot_id]
-            }
-            try:
-                self.__collection_user.insert_one(new_user)
-                print(f"Inserted new user: {chat_id} with pot: {pot_id}")
-                return True
-            except Exception as e:
-                print(f"Error inserting user {chat_id}: {e}")
-                return False
+                }
+                try:
+                    self.__collection_user.insert_one(new_user)
+                    print(f"Inserted new user: {chat_id} with pot: {pot_id}")
+                    return True
+                except Exception as e:
+                    print(f"Error inserting user {chat_id}: {e}")
+                    return False
         else:
             try:
                 result = self.__collection_user.update_one(
