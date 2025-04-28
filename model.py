@@ -53,7 +53,7 @@ class Model():
                 return False
 
     def is_user(self, pot_id):
-        user = self.__collection_user.find_one({'pot_id' : pot_id}, {'_id': 0,'chat_id' : 1})
+        user = self.__collection_user.find_one({'pot_ids' : pot_id}, {'_id': 0,'chat_id' : 1})
         if user == None:
             return False
         else:
