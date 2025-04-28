@@ -111,8 +111,36 @@ class Model():
         cursor = self.__collection_data.find({'pot_id' : pot_id}, {'_id': 0, 'data.ph': 1, 'data.soil': 1}).sort('_id', -1).limit(10)
         raw_data = list(cursor)
 
-        df = pd.json_normalize(raw_data)
+        # Handle case where no documents are found
+        if not raw_data:
+            return []
 
-        df = df[['data.ph', 'data.soil']].iloc[::-1]
+        try:
+            df = pd.json_normalize(raw_data)
 
-        return df.rename(columns={'data.ph': 'ph', 'data.soil': 'soil'}).to_dict(orient='records')
+            # Handle case where DataFrame is empty after normalization (shouldn't happen if raw_data wasn't empty, but good practice)
+            if df.empty:
+                 return []
+
+            # Check which expected columns actually exist in the DataFrame
+            cols_to_select = []
+            rename_map = {}
+            if 'data.ph' in df.columns:
+                cols_to_select.append('data.ph')
+                rename_map['data.ph'] = 'ph'
+            if 'data.soil' in df.columns:
+                cols_to_select.append('data.soil')
+                rename_map['data.soil'] = 'soil'
+
+            # Handle case where neither expected column exists
+            if not cols_to_select:
+                return []
+
+            # Select existing columns, reverse order, rename, and convert to dict
+            df_processed = df[cols_to_select].iloc[::-1].rename(columns=rename_map)
+            return df_processed.to_dict(orient='records')
+
+        except Exception as e:
+            # Log the error for debugging and return an empty list to the controller
+            print(f"Error processing data for pot_id {pot_id}: {e}")
+            return []
