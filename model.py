@@ -20,14 +20,37 @@ class Model():
         self.__collection_image = self.__database.get_collection('image')
 
     def __specification(self):
-        self.__collection_user.create_index([('pot_id')], unique=True)
+        self.__collection_user.create_index([('chat_id')], unique=True)
+        self.__collection_data.create_index([('pot_id')])
 
     def insert_user(self, chat_id, pot_id):
-        user = {
-            'chat_id' : chat_id,
-            'pot_id' : pot_id
+        user_search = self.__collection_user.find_one({'chat_id' : chat_id})
+        if user_search != None:
+            new_user = {
+                'chat_id' : chat_id,
+                'pot_id' : [pot_id]
             }
-        self.__collection_user.insert_one(user)
+            try:
+                self.__collection_user.insert_one(new_user)
+                print(f"Inserted new user: {chat_id} with pot: {pot_id}")
+                return True
+            except Exception as e:
+                print(f"Error inserting user {chat_id}: {e}")
+                return False
+        else:
+            try:
+                result = self.__collection_user.update_one(
+                    {'chat_id': chat_id},
+                    {'$addToSet': {'pot_ids': pot_id}}
+                )
+                if result.modified_count > 0:
+                    print(f"Added pot_id {pot_id} to user {chat_id}")
+                else:
+                    print(f"Pot_id {pot_id} already associated with user {chat_id}")
+                return True
+            except Exception as e:
+                print(f"Error updating user {chat_id}: {e}")
+                return False
 
     def is_user(self, pot_id):
         user = self.__collection_user.find_one({'pot_id' : pot_id}, {'_id': 0,'chat_id' : 1})
