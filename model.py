@@ -77,8 +77,7 @@ class Model():
             model = YOLO('best_sickness.pt')
             results = model(frame, verbose=False, conf=0.5)
             detected_frame_rgb = results[0].plot()
-            detected_frame_bgr = cv2.cvtColor
-            (detected_frame_rgb, cv2.COLOR_RGB2BGR)
+            detected_frame_bgr = cv2.cvtColor(detected_frame_rgb, cv2.COLOR_RGB2BGR)
 
             _, buffer = cv2.imencode('.jpg', detected_frame_bgr)
             processed_image_bytes = buffer.tobytes()
