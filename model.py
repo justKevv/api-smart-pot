@@ -75,7 +75,7 @@ class Model():
         if frame is not None:
             frame_rgb = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
             model = YOLO('best_sickness.pt')
-            results = model(frame, verbose=False, conf=0.5)
+            results = model(frame_rgb, verbose=False, conf=0.5)
             detected_frame_rgb = results[0].plot()
             detected_frame_bgr = cv2.cvtColor(detected_frame_rgb, cv2.COLOR_RGB2BGR)
 
