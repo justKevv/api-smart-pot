@@ -1,5 +1,8 @@
 [phases.setup]
 nixPkgs = ["opencv", "libGL", "libGLU"]
 
+[phases.install]
+cmd = "pip install -r requirements.txt"
+
 [start]
 cmd = "python main.py"
