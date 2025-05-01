@@ -1,8 +1,7 @@
 # nixpacks.toml
+
 [phases.setup]
-# Installs required system libraries for OpenCV and potentially related ones
 aptPkgs = ["libgl1-mesa-glx", "libglib2.0-0", "libsm6", "libxext6", "libxrender-dev"]
 
-[start]
-# Specifies the command to start your application
+[phases.start]
 cmd = "python main.py"
