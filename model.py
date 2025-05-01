@@ -2,6 +2,11 @@ from pymongo import MongoClient
 from pymongo.server_api import ServerApi
 from datetime import datetime
 import pandas as pd
+import numpy as np
+import cv2
+from ultralytics import YOLO
+import base64
+
 import os
 
 class Model():
@@ -61,6 +66,24 @@ class Model():
             return False
         else:
             return True
+
+    def predict(self, image_bytes):
+        image_bytes = np.asarray(bytearray(response.raw.read()), dtype=np.uint8)
+
+        frame = cv2.imdecode(image_bytes, cv2.IMREAD_COLOR)
+
+        if frame is not None:
+            frame = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
+            model = YOLO('best_sickness.pt')
+            results = model(frame, verbose=False, conf=0.5)
+            detected_frame = results[0].plot()
+
+            _, buffer = cv2.imencode('.jpg', detected_frame)
+            image_bytes = buffer.tobytes()
+
+            return image_bytes
+        else:
+            return None
 
     def get_pot_ids(self, chat_id):
         user = self.__collection_user.find_one({'chat_id' : chat_id}, {'_id': 0,'pot_ids' : 1})
