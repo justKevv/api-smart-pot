@@ -1,2 +1,8 @@
+# nixpacks.toml
 [phases.setup]
-nixPkgs = ["python312", "libGL", "libGLU", "mesa", "glib", "pkg-config"]
+# Installs required system libraries for OpenCV
+aptPkgs = ["libgl1-mesa-glx", "libglib2.0-0"]
+
+[start]
+# Specifies the command to start your application
+cmd = "python main.py"
