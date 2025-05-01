@@ -39,11 +39,16 @@ class Controller:
             if self.__db_model.is_user(id):
                 image_bytes = request.data
                 image_processed = self.__db_model.predict(image_bytes)
-                url = self.__cloudinary.upload_image(image_processed, public_id=str(id))
-                return jsonify({'message': 'Image processed and uploaded successfully!', 'url': url}), 200
+
+                if image_processed is not None:
+                    url = self.__cloudinary.upload_image(image_processed, public_id=str(id))
+                    return jsonify({'message': 'Image processed and uploaded successfully!', 'url': url}), 200
+                else:
+                    return jsonify({'message': 'Image could not be processed or no objects detected.'}), 400
             else:
                 return jsonify({'message': 'User not found.'}), 404
         except Exception as e:
+            print(f"Error in _post_image: {e}")
             return str(e), 500
 
     def _get_image(self, id):

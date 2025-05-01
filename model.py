@@ -69,21 +69,21 @@ class Model():
             return True
 
     def predict(self, image_bytes):
-        # Correctly use the 'image_bytes' argument passed to the function
         nparr = np.frombuffer(image_bytes, np.uint8)
         frame = cv2.imdecode(nparr, cv2.IMREAD_COLOR)
 
         if frame is not None:
-            frame = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
+            frame_rgb = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
             model = YOLO('best_sickness.pt')
             results = model(frame, verbose=False, conf=0.5)
-            detected_frame = results[0].plot()
+            detected_frame_rgb = results[0].plot()
+            detected_frame_bgr = cv2.cvtColor
+            (detected_frame_rgb, cv2.COLOR_RGB2BGR)
 
-            _, buffer = cv2.imencode('.jpg', detected_frame)
-            # Use a different variable name for clarity if you prefer
+            _, buffer = cv2.imencode('.jpg', detected_frame_bgr)
             processed_image_bytes = buffer.tobytes()
 
-            return processed_image_bytes # Return the processed bytes
+            return processed_image_bytes
         else:
             return None
 
