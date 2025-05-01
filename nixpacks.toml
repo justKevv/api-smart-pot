@@ -1,0 +1,5 @@
+[phases.setup]
+nixPkgs = ["opencv", "libGL", "libGLU"]
+
+[start]
+cmd = "python main.py"
