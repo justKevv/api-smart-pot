@@ -14,13 +14,16 @@ RUN apt-get update && \
 # Set a working directory inside the container
 WORKDIR /app
 
-# Copy your application code into the container
-COPY . /app
+# Copy only the requirements file first
+COPY requirements.txt .
 
 # Create a virtual environment and install dependencies
 RUN python -m venv /opt/venv
 RUN /opt/venv/bin/pip install --upgrade pip
 RUN /opt/venv/bin/pip install -r requirements.txt
+
+# Copy your application code into the container
+COPY . /app
 
 # Set the virtual environment as the default Python environment
 ENV PATH="/opt/venv/bin:$PATH"
@@ -30,5 +33,3 @@ EXPOSE 5000
 
 # Command to run your app
 CMD ["python", "main.py"]
-
-
