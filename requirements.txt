@@ -3,5 +3,5 @@ requests
 pymongo==4.6.1
 pandas
 cloudinary
-opencv-python
+opencv-python-headless
 ultralytics
