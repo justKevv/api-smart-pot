@@ -74,10 +74,16 @@ class Model():
 
         if frame is not None:
             frame_rgb = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
-            model = YOLO('best_sickness.pt')
-            results = model(frame_rgb, verbose=False, conf=0.5)
-            detected_frame_rgb = results[0].plot()
-            detected_frame_bgr = cv2.cvtColor(detected_frame_rgb, cv2.COLOR_RGB2BGR)
+
+            model_pest = YOLO('best_pest.pt')
+            results_pest = model_pest(frame_rgb, verbose=False, conf=0.5)
+            detected_frame_rgb_with_pests = results_pest[0].plot()
+
+            model_sickness = YOLO('best_sickness.pt')
+            results_sickness = model_sickness(detected_frame_rgb_with_pests, verbose=False, conf=0.5)
+            final_detected_frame_rgb = results_sickness[0].plot()
+
+            detected_frame_bgr = cv2.cvtColor(final_detected_frame_rgb, cv2.COLOR_RGB2BGR)
 
             _, buffer = cv2.imencode('.jpg', detected_frame_bgr)
             processed_image_bytes = buffer.tobytes()
