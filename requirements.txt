@@ -5,4 +5,3 @@ pandas
 cloudinary
 opencv-python-headless==4.8.0.76  # or latest working version
 ultralytics
-opencv-python==none
