@@ -76,7 +76,7 @@ class Model():
             frame_rgb = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
 
             model_pest = YOLO('best_pest.pt')
-            results_pest = model_pest(frame_rgb, verbose=False, conf=0.5)
+            results_pest = model_pest(frame_rgb, verbose=False)
             detected_frame_rgb_with_pests = results_pest[0].plot()
 
             model_sickness = YOLO('best_sickness.pt')
