@@ -1,5 +1,5 @@
 [phases.setup]
-nixPkgs = ["opencv", "libGL", "libGLU"]
+aptPkgs = ["libgl1-mesa-glx", "libglib2.0-0", "libsm6", "libxext6", "libxrender1"]
 
 [phases.install]
 cmd = "pip install -r requirements.txt"
