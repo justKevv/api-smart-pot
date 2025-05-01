@@ -5,6 +5,7 @@ import pandas as pd
 import numpy as np
 import cv2
 from ultralytics import YOLO
+
 import base64
 
 import os
@@ -68,9 +69,9 @@ class Model():
             return True
 
     def predict(self, image_bytes):
-        image_bytes = np.asarray(bytearray(response.raw.read()), dtype=np.uint8)
-
-        frame = cv2.imdecode(image_bytes, cv2.IMREAD_COLOR)
+        # Correctly use the 'image_bytes' argument passed to the function
+        nparr = np.frombuffer(image_bytes, np.uint8)
+        frame = cv2.imdecode(nparr, cv2.IMREAD_COLOR)
 
         if frame is not None:
             frame = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
@@ -79,9 +80,10 @@ class Model():
             detected_frame = results[0].plot()
 
             _, buffer = cv2.imencode('.jpg', detected_frame)
-            image_bytes = buffer.tobytes()
+            # Use a different variable name for clarity if you prefer
+            processed_image_bytes = buffer.tobytes()
 
-            return image_bytes
+            return processed_image_bytes # Return the processed bytes
         else:
             return None
 
